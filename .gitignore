@@ -1,0 +1,80 @@
+# Generated .gitignore file for: Node, C#, TypeScript, JavaScript, React, VSCode, Windows, npm, Vite, SQLite, JSON, PostgreSQL, MySQL, Docker
+# Created with FOSSA's DevOps Tools
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+.DS_Store
+dist/
+.cache/
+coverage/
+
+# C#
+# Add C#-specific ignores here
+
+# TypeScript
+# Add TypeScript-specific ignores here
+
+# JavaScript
+# Add JavaScript-specific ignores here
+
+# React
+node_modules/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Windows
+# Add Windows-specific ignores here
+
+# npm
+# Add npm-specific ignores here
+
+# Vite
+# Add Vite-specific ignores here
+
+# SQLite
+# Add SQLite-specific ignores here
+
+# JSON
+# Add JSON-specific ignores here
+
+# PostgreSQL
+# Add PostgreSQL-specific ignores here
+
+# MySQL
+# Add MySQL-specific ignores here
+
+# Docker
+docker-compose.override.yml
+Dockerfile.override
+.dockerignore
+
+# Common
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+*.swp
+*~
+
+# IDE and editor generated files
+.idea/
+*.sublime-*
+
+# Local environment files
+.env
+.env.local
+.env.*.local

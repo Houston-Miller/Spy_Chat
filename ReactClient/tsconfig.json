@@ -1,0 +1,11 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".", // This is important for path resolution
+    "paths": {
+      "@/*": ["./src/*"] // Maps @/ to the src folder
+    },
+    // Other compiler options...
+  }
+  // Other config fields like "include", "exclude", etc.
+}
