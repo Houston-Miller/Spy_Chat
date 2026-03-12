@@ -1,6 +1,7 @@
 // tsconfig.json
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
     "baseUrl": ".", // This is important for path resolution
     "paths": {
       "@/*": ["./src/*"] // Maps @/ to the src folder
