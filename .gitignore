@@ -12,7 +12,15 @@ dist/
 coverage/
 
 # C#
-# Add C#-specific ignores here
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
 # TypeScript
 # Add TypeScript-specific ignores here
@@ -45,7 +53,13 @@ build/
 # Add Vite-specific ignores here
 
 # SQLite
-# Add SQLite-specific ignores here
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 
 # JSON
 # Add JSON-specific ignores here
@@ -78,3 +92,6 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# .NET 10 Solution Cache
+.vs/**/slnx.sqlite
