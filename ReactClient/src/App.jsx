@@ -5,7 +5,8 @@ import './App.css'
 import { HubConnectionBuilder } from '@microsoft/signalr';
 
 const connection = new HubConnectionBuilder()
-    .withUrl('http://localhost:5062')
+    .withUrl('http://localhost:5062/chatHub')
+    .withAutomaticReconnect()
     .build();
 
 connection.start()
@@ -17,8 +18,7 @@ connection.on('ReceiveMessage', message => {
 })
 
 function App() {
-//Removed template starting page
-
+    
 }
 
 export default App
