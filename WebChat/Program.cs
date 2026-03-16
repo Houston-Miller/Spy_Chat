@@ -5,8 +5,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddRazorPages();
+// This CORS policy is required to allow the React frontend to connect to the SignalR hub
+builder.Services.AddCors(options => {
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
+app.UseCors("ReactPolicy");
 
 if (!app.Environment.IsDevelopment())
 {
