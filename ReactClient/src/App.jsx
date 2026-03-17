@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { HubConnectionBuilder } from '@microsoft/signalr';
+import Lobby from './components/lobby';
+import CodecBoard from './components/codecboard';
 
 const connection = new HubConnectionBuilder()
     .withUrl('http://localhost:5062/chatHub')
@@ -18,7 +18,16 @@ connection.on('ReceiveMessage', message => {
 })
 
 function App() {
-    
+  return (
+    <div className="min-h-screen bg-slate-50 p-8">
+      <Lobby />
+
+
+      <div className="mt-10">
+        <CodecBoard />
+      </div>
+    </div>
+  )
 }
 
 export default App
