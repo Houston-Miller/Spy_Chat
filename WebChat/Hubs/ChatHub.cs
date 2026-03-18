@@ -4,9 +4,23 @@ namespace WebChat.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        //added roomID to paramerters but i'm not certain how groups work yet
+        public async Task SendMessage(string roomID,string user, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            //changed this from Clients.All to Clients.Group(roomID) but again, not sure how groups work yet
+            await Clients.Group(roomID).SendAsync("ReceiveMessage", user, message);
         }
+
+        // This is untested, it's basically just an autofill after making the Task
+        public async Task JoinFrequency(string roomID)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomID);
+        }
+
+        public async Task MessageEnd(string roomID)
+        {
+            // This will be used to unlock the send button for the second user
+        }
+
     }
 }
