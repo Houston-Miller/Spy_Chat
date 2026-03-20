@@ -1,24 +1,82 @@
-export default function CodecBoard() {
+import { useState, useEffect } from "react";
+import { HubConnection } from "@microsoft/signalr";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
+
+interface CodecBoardProps {
+    connection: HubConnection | null;
+    roomID: string;
+}
+
+interface ChatMessage {
+    user: string;
+    text: string;
+}
+
+export default function CodecBoard({ connection, roomID }: CodecBoardProps) {
+    const [message, setMessage] = useState("");
+    const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+
+    useEffect(() => {
+        if (!connection) return;
+        connection.on("ReceiveMessage", (user: string, text: string) => {
+            setChatHistory((prev) => [...prev, { user, text }]);
+        });
+        return () => {
+            connection.off("ReceiveMessage");
+        };
+    }, [connection]);
+
+    const handleSendMessage = async () => {
+        if (!connection || !message.trim()) return;
+        try {
+            await connection.invoke("SendMessage", roomID, message);
+            setMessage(""); //This is to clear the input field after sending a message
+        } catch (error) {
+            console.error("Error sending message:", error);
+
+        }
+    };
+
   return (
-    <div className="flex items-center justify-between gap-4 w-full h-64 bg-slate-100 p-4">
-      <div className="w-24 h-24 bg-blue-300 flex items-center justify-center rounded-full">
-        [AVATAR L]
+    <div>
+      <div>
+        <h2>FREQ: {roomID}</h2>
+        <span>Connected...</span>
       </div>
 
-      <div className="flex-1 h-full bg-white border-2 border-slate-300 rounded p-4 shadow-sm relative">
-        <p className="text-slate-600 italic">
-          Typewriter text will appear here...
-        </p>
-        
-        <div className="absolute bottom-2 right-4 text-xs text-slate-400">
-          Waiting for input...
-        </div>
+      {/* Message Readout */}
+      <div>
+        {chatHistory.length === 0 && (
+          <p>Awaiting signal...</p>
+        )}
+        {chatHistory.map((msg, index) => (
+          <div key={index}>
+            <span>[{msg.user.substring(0, 5)}]:</span>
+            <span>{msg.text}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="w-24 h-24 bg-red-300 flex items-center justify-center rounded-full">
-        [AVATAR R]
+      {/* Textarea and Send Button */}
+      <div className="space-y-4">
+        <Textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="ENTER MESSAGE..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
+        />
+        <Button 
+          onClick={handleSendMessage}
+        >
+          SEND
+        </Button>
       </div>
-
     </div>
   );
 }

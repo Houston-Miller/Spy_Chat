@@ -9,23 +9,26 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function Lobby() {
+interface LobbyProps {
+    onJoinRoom: (roomID: string) => Promise<void>;
+}
+
+const frequencies = ["140.15", "140.48", "140.85", "140.96", "141.12", "141.52", "141.80"];
+
+export default function Lobby({ onJoinRoom }: LobbyProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Frequency</CardTitle>
         <CardDescription>Who Would You Like to Contact?</CardDescription>
-        <CardAction>Card Action</CardAction>
+        <CardAction></CardAction>
       </CardHeader>
       <CardContent>
-        {/* These need to be href links to the signalR groups that are created for each frequency */}
-        <p>140.15</p>
-        <p>140.48</p>
-        <p>140.85</p>
-        <p>140.96</p>
-        <p>141.12</p>
-        <p>141.52</p>
-        <p>141.80</p>
+        {frequencies.map((id) => (
+          <Button key={id} onClick={() => onJoinRoom(id)}>
+            Connect To {id}
+          </Button>
+        ))}
       </CardContent>
       <CardFooter>
         <Button variant="ghost">Call</Button>

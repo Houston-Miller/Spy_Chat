@@ -12,7 +12,7 @@ namespace WebChat.Hubs
         }
 
         // This is untested, it's basically just an autofill after making the Task
-        public async Task JoinFrequency(string roomID)
+        public async Task JoinRoom(string roomID)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomID);
         }
