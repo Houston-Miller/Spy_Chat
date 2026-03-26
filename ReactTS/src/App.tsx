@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "./assets/vite.svg";
+import codec from "./assets/CodecButBetter.webp";
+import "./App.css";
 //import {lobby, codecboard} from '@/components'
-import Lobby from '@/components/lobby'
-import CodecBoard from '@/components/codecBoard'
-import { useSignalR } from './hooks/signalRHook'
+import Lobby from "@/components/lobby";
+import CodecBoard from "@/components/codecBoard";
+import { useSignalR } from "./hooks/signalRHook";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
   const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
-  const [activeRoom, setActiveRoom] = useState<string>("");
+  const [activeRoom, setActiveRoom] = useState<string>("140.15");
+  const [message, setMessage] = useState("");
 
   const handleJoinRoom = async (roomID: string) => {
     if (!connection) return;
@@ -26,15 +29,65 @@ export default function App() {
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!connection || !message.trim()) return;
+      console.log("Sending to room id: ", activeRoom)
+
+    try {
+      await connection.invoke("SendMessage", activeRoom, message);
+      setMessage(""); //This is to clear the input field after sending a message
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
-    <main>
-      {view === "LOBBY" && <Lobby onJoinRoom={handleJoinRoom} />}
-      {view === "CODECBOARD" && <CodecBoard connection={connection} roomID={activeRoom} />}
-    </main>
-  )
+    <div className="h-screen dark">
+      <div className="grid grid-rows-4 h-full">
+        <div className="row-span-2 max-h-full overflow-hidden">
+          <div className="grid grid-cols-5">
+            <div className="col-span-1">SNAKE</div>
+            <div className="col-span-3 size-full max-h-full">
+              <div className="size-full flex items-center justify-center">
+                <img
+                  src={codec}
+                  className="h-full object-cover md:w-80"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div className="col-span-1">LIQUID</div>
+          </div>
+        </div>
+        <div className="row-span-1">TEXT</div>
+        <div className="row-span-1">
+          <div className="flex flex-row">
+            <Input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="ENTER MESSAGE..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+            ></Input>
+            <Button onClick={handleSendMessage}>Send</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-  // This is the template code for vite, I am keeping it for reference atm
-  //   const [count, setCount] = useState(0)
+
+{
+  /* {view === "LOBBY" && <Lobby onJoinRoom={handleJoinRoom} />}
+      {view === "CODECBOARD" && <CodecBoard connection={connection} roomID={activeRoom} />} */
+}
+
+// This is the template code for vite, I am keeping it for reference atm
+//   const [count, setCount] = useState(0)
 
 //   return (
 //     <>
