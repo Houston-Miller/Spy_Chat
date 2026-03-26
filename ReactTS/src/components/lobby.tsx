@@ -17,7 +17,7 @@ const frequencies = ["140.15", "140.48", "140.85", "140.96", "141.12", "141.52",
 
 export default function Lobby({ onJoinRoom }: LobbyProps) {
   return (
-    <Card>
+    <Card className="bg-red-500">
       <CardHeader>
         <CardTitle>Frequency</CardTitle>
         <CardDescription>Who Would You Like to Contact?</CardDescription>
