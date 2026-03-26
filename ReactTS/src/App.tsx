@@ -51,7 +51,7 @@ export default function App() {
               <div className="size-full flex items-center justify-center">
                 <img
                   src={codec}
-                  className="h-full object-cover md:w-80"
+                  className="h-full object-cover w-80"
                   alt=""
                 />
               </div>
