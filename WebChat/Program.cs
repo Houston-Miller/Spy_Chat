@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
+builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 // This CORS policy is required to allow the React frontend to connect to the SignalR hub
 builder.Services.AddCors(options => {
@@ -31,6 +32,8 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapHub<ChatHub>("/chatHub");
+//Update this to map Controllers:
+app.MapControllers();
 app.MapRazorPages()
    .WithStaticAssets();
 
