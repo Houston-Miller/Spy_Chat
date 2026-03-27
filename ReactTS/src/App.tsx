@@ -1,11 +1,9 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import codec from "./assets/CodecButBetter.webp";
+import codec from "./assets/Codec.webp";
 import "./App.css";
 //import {lobby, codecboard} from '@/components'
-import Lobby from "@/components/lobby";
-import CodecBoard from "@/components/codecBoard";
+//import Lobby from "@/components/lobby";
+//import CodecBoard from "@/components/codecBoard";
 import { useSignalR } from "./hooks/signalRHook";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -13,7 +11,7 @@ import { Input } from "./components/ui/input";
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
-  const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
+  //const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
   const [activeRoom, setActiveRoom] = useState<string>("140.15");
   const [message, setMessage] = useState("");
 
@@ -23,7 +21,7 @@ export default function App() {
     try {
       await connection.invoke("JoinRoom", roomID);
       setActiveRoom(roomID);
-      setView("CODECBOARD");
+      //setView("CODECBOARD");
     } catch (err) {
       console.error("Error joining room: ", err);
     }

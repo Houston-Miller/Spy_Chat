@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using WebChat.Hubs;
 
@@ -16,7 +17,7 @@ namespace WebChat.Controllers
         }
 
         [HttpGet]
-        public IAsyncResult Get() => Ok(ActiveFrequencies);
+        public IActionResult Get() => Ok(ActiveFrequencies);
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] string frequency)
