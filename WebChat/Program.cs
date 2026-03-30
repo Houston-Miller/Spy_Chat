@@ -1,4 +1,6 @@
 using WebChat.Hubs;
+using WebChat.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,8 @@ builder.Services.AddCors(options => {
               .AllowCredentials();
     });
 });
+builder.Services.AddDbContext<ChatDbContext>(options =>
+    options.UseSqlite("Data Source=codec.db"));
 
 var app = builder.Build();
 app.UseCors("ReactPolicy");

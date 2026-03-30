@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using WebChat.Hubs;
+using WebChat.Models;
 
 namespace WebChat.Controllers
 {
@@ -8,41 +10,52 @@ namespace WebChat.Controllers
     [Route("api/[controller]")]
     public class FrequencyController : ControllerBase
     {
-        private static readonly List<string> ActiveFrequencies = new List<string>();
+        private readonly ChatDbContext _context;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public FrequencyController(IHubContext<ChatHub> hubContext)
+        public FrequencyController(ChatDbContext context, IHubContext<ChatHub> hubContext)
         {
+            _context = context;
             _hubContext = hubContext;
         }
 
+        // this endpoint should get /api/frequency
         [HttpGet]
-        public IActionResult Get() => Ok(ActiveFrequencies);
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] string frequency)
+        public async Task<IActionResult> Get()
         {
-            if (string.IsNullOrWhiteSpace(frequency)) return BadRequest("Invalid frequency.");
-
-            if (!ActiveFrequencies.Contains(frequency))
-            {
-                ActiveFrequencies.Add(frequency);
-            }
-
-            return Ok(new { status = "ACTIVE", frequency });
+            var codes = await _context.Frequencies.Select(f => f.Code).ToListAsync();
+            return Ok(codes);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string id)
+        // also on /api/frequency
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] string code)
         {
-            if (ActiveFrequencies.Contains(id))
+            if (string.IsNullOrWhiteSpace(code)) return BadRequest("Invalid frequency.");
+            // new check here to see if the frequency already exists in the database
+            var exists = await _context.Frequencies.AnyAsync(f => f.Code == code);
+
+            if (!exists)
             {
-                ActiveFrequencies.Remove(id);
-
-                return Ok(new { status = "DEACTIVATED" });
+                _context.Frequencies.Add(new Frequency {Code = code});
+                await _context.SaveChangesAsync();
             }
-            return NotFound();
 
+            return Ok(new { status = "FREQUENCY_ADDED", frequency = code });
+        }
+
+        // this should have to hit the specific frequency endpoint, so /api/frequency/{code}
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string code)
+        {
+            var freq = await _context.Frequencies.FirstOrDefaultAsync(f => f.Code == code);
+            if (freq == null) return NotFound();
+
+            _context.Frequencies.Remove(freq);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new { status = "FREQUENCY_REMOVED"});
+            
         }
 
     }

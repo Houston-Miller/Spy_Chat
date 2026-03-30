@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import codec from "./assets/Codec.webp";
 import "./App.css";
 //import {lobby, codecboard} from '@/components'
@@ -13,6 +13,7 @@ export default function App() {
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
   //const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
   const [activeRoom, setActiveRoom] = useState<string>("140.15");
+  const [frequency, setFrequency] = useState("");
   const [message, setMessage] = useState("");
 
   const handleJoinRoom = async (roomID: string) => {
