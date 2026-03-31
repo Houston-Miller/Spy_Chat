@@ -1,20 +1,75 @@
 import { useState, useEffect } from "react";
 import codec from "./assets/Codec.webp";
 import "./App.css";
-//import {lobby, codecboard} from '@/components'
-//import Lobby from "@/components/lobby";
-//import CodecBoard from "@/components/codecBoard";
 import { useSignalR } from "./hooks/signalRHook";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const API_URL = "http://localhost:5062/api/frequency";
 
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
   //const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
-  const [activeRoom, setActiveRoom] = useState<string>("140.15");
+  const [activeRoom, setActiveRoom] = useState("");
+  const [openRooms, setOpenRooms] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("");
   const [message, setMessage] = useState("");
+
+  // Create requirement met here
+  const handleCreateRoom = async (roomID: string) => {
+    if (!connection || !roomID) return;
+    try {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(roomID),
+      });
+
+      await connection.invoke("joinRoom", roomID);
+      setActiveRoom(roomID);
+    } catch (err) {
+      console.error("Error creating room: ", err);
+    }
+  };
+
+  // Read requirement met here
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        setOpenRooms(data);
+      } catch (err) {
+        console.error("Error fetching rooms: ", err);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  // Delete requirement met here
+  const handleDeleteRoom = async (roomID: string) => {
+    try {
+      await fetch(`${API_URL}/${roomID}`, {
+        method: "DELETE",
+      });
+      setOpenRooms((prev) => prev.filter((r) => r !== roomID));
+    } catch (err) {
+      console.error("Error deleting room: ", err);
+    }
+  };
 
   const handleJoinRoom = async (roomID: string) => {
     if (!connection) return;
@@ -30,7 +85,7 @@ export default function App() {
 
   const handleSendMessage = async () => {
     if (!connection || !message.trim()) return;
-      console.log("Sending to room id: ", activeRoom)
+    console.log("Sending to room id: ", activeRoom);
 
     try {
       await connection.invoke("SendMessage", activeRoom, message);
@@ -47,17 +102,37 @@ export default function App() {
           <div className="grid grid-cols-5">
             <div className="col-span-1">SNAKE</div>
             <div className="col-span-3 size-full max-h-full">
+              <Input
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value)}
+                placeholder="ENTER FREQUENCY..."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleCreateRoom(frequency);
+                  }
+                }}
+              />
               <div className="size-full flex items-center justify-center">
-                <img
-                  src={codec}
-                  className="h-full object-cover w-80"
-                  alt=""
-                />
+                <img src={codec} className="h-full object-cover w-80" alt="" />
               </div>
             </div>
             <div className="col-span-1">LIQUID</div>
           </div>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">Frequencies</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuSeparator />
+            {openRooms.map((room) => (
+              <DropdownMenuItem key={room} onClick={() => handleJoinRoom(room)}>
+                {room}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <div className="row-span-1">TEXT</div>
         <div className="row-span-1">
           <div className="flex flex-row">
