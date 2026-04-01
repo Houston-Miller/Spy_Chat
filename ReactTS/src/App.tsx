@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import codec from "./assets/Codec.webp";
 import "./App.css";
 import { useSignalR } from "./hooks/signalRHook";
@@ -23,7 +23,9 @@ export default function App() {
   const [activeRoom, setActiveRoom] = useState("");
   const [openRooms, setOpenRooms] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("");
-  const [message, setMessage] = useState("");
+  // setting this as message history
+  const [message, setMessage] = useState<{user: string, text: string}[]>([]);
+  const [inputMessage, setInputMessage] = useState("");
 
   // Create requirement met here
   const handleCreateRoom = async (roomID: string) => {
@@ -37,7 +39,7 @@ export default function App() {
         body: JSON.stringify(roomID),
       });
 
-      await connection.invoke("joinRoom", roomID);
+      await connection.invoke("JoinRoom", roomID);
       setActiveRoom(roomID);
     } catch (err) {
       console.error("Error creating room: ", err);
@@ -58,6 +60,18 @@ export default function App() {
 
     fetchRooms();
   }, []);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    connection.on("ReceiveMessage", (user: string, text: string) => {
+      setMessage((prev) => [...prev, { user, text }]);
+    });
+
+    return () => {
+      connection.off("ReceiveMessage");
+    };
+  }, [connection]);
 
   // Delete requirement met here
   const handleDeleteRoom = async (roomID: string) => {
@@ -84,12 +98,12 @@ export default function App() {
   };
 
   const handleSendMessage = async () => {
-    if (!connection || !message.trim()) return;
+    if (!connection || !inputMessage) return;
     console.log("Sending to room id: ", activeRoom);
 
     try {
-      await connection.invoke("SendMessage", activeRoom, message);
-      setMessage(""); //This is to clear the input field after sending a message
+      await connection.invoke("SendMessage", activeRoom, inputMessage);
+      setInputMessage(""); //This is to clear the input field after sending a message
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -133,12 +147,19 @@ export default function App() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="row-span-1">TEXT</div>
+        <div className="row-span-1">
+          {message.map((msg, i) => (
+            <div key={i} className="mb-1">
+              <span className="font-bold">{msg.user}: </span>
+              <span>{msg.text}</span>
+            </div>
+          ))}
+        </div>
         <div className="row-span-1">
           <div className="flex flex-row">
             <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
               placeholder="ENTER MESSAGE..."
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
