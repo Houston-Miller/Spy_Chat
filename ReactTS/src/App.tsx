@@ -13,6 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const API_URL = "http://localhost:5062/api/frequency";
 
@@ -24,7 +32,7 @@ export default function App() {
   const [openRooms, setOpenRooms] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("");
   // setting this as message history
-  const [message, setMessage] = useState<{user: string, text: string}[]>([]);
+  const [message, setMessage] = useState<{ user: string; text: string }[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [username, setUsername] = useState("");
 
@@ -103,7 +111,12 @@ export default function App() {
     console.log("Sending to room id: ", activeRoom);
 
     try {
-      await connection.invoke("SendMessage", activeRoom, username, inputMessage);
+      await connection.invoke(
+        "SendMessage",
+        activeRoom,
+        username,
+        inputMessage,
+      );
       setInputMessage(""); //This is to clear the input field after sending a message
     } catch (error) {
       console.error("Error sending message:", error);
@@ -115,7 +128,41 @@ export default function App() {
       <div className="grid grid-rows-4 h-full">
         <div className="row-span-2 max-h-full overflow-hidden">
           <div className="grid grid-cols-5">
-            <div className="col-span-1">SNAKE</div>
+            <div className="col-span-1">
+              <Carousel className="max-w-full ">
+                <CarouselContent>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <span className="text-4x1 font-semibold">SNAKE</span>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <span className="text-4x1 font-semibold">LIQUID</span>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <span className="text-4x1 font-semibold">MERYL</span>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
             <div className="col-span-3 size-full max-h-full">
               <Input
                 value={frequency}
