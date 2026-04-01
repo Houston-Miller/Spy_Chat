@@ -5,10 +5,10 @@ namespace WebChat.Hubs
     public class ChatHub : Hub
     {
         //added roomID to paramerters but i'm not certain how groups work yet
-        public async Task SendMessage(string roomID, string message)
+        public async Task SendMessage(string roomID, string user,string message)
         {
             //changed this from Clients.All to Clients.Group(roomID) but again, not sure how groups work yet
-            await Clients.Group(roomID).SendAsync("ReceiveMessage", Context.ConnectionId, message);
+            await Clients.Group(roomID).SendAsync("ReceiveMessage", user, message);
         }
 
         // This is untested, it's basically just an autofill after making the Task

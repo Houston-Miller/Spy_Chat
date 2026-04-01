@@ -26,6 +26,7 @@ export default function App() {
   // setting this as message history
   const [message, setMessage] = useState<{user: string, text: string}[]>([]);
   const [inputMessage, setInputMessage] = useState("");
+  const [username, setUsername] = useState("");
 
   // Create requirement met here
   const handleCreateRoom = async (roomID: string) => {
@@ -102,7 +103,7 @@ export default function App() {
     console.log("Sending to room id: ", activeRoom);
 
     try {
-      await connection.invoke("SendMessage", activeRoom, inputMessage);
+      await connection.invoke("SendMessage", activeRoom, username, inputMessage);
       setInputMessage(""); //This is to clear the input field after sending a message
     } catch (error) {
       console.error("Error sending message:", error);
