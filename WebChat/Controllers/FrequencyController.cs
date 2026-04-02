@@ -45,7 +45,7 @@ namespace WebChat.Controllers
         }
 
         // this should have to hit the specific frequency endpoint, so /api/frequency/{code}
-        [HttpDelete]
+        [HttpDelete("{code}")]
         public async Task<IActionResult> Delete(string code)
         {
             var freq = await _context.Frequencies.FirstOrDefaultAsync(f => f.Code == code);

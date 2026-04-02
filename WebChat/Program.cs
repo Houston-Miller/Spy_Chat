@@ -22,7 +22,6 @@ builder.Services.AddDbContext<ChatDbContext>(options =>
     options.UseSqlite("Data Source=codec.db"));
 
 var app = builder.Build();
-app.UseCors("ReactPolicy");
 
 if (!app.Environment.IsDevelopment())
 {
@@ -32,6 +31,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("ReactPolicy");
 app.UseAuthorization();
 
 app.MapStaticAssets();

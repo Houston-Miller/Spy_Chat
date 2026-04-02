@@ -1,5 +1,6 @@
 import { useState, useEffect, use } from "react";
 import codec from "./assets/Codec.webp";
+import snakecodec from "./assets/snakecodec.jpg";
 import "./App.css";
 import { useSignalR } from "./hooks/signalRHook";
 import { Button } from "./components/ui/button";
@@ -13,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -22,7 +23,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const API_URL = "http://localhost:5062/api/frequency";
+const API_URL = "http://localhost:5062/api/";
 
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
@@ -40,7 +41,7 @@ export default function App() {
   const handleCreateRoom = async (roomID: string) => {
     if (!connection || !roomID) return;
     try {
-      await fetch(API_URL, {
+      await fetch(`${API_URL}frequency`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,6 +51,10 @@ export default function App() {
 
       await connection.invoke("JoinRoom", roomID);
       setActiveRoom(roomID);
+      setInputMessage("");
+      setOpenRooms((prev) => {
+        return [...prev, roomID];
+      });
     } catch (err) {
       console.error("Error creating room: ", err);
     }
@@ -59,7 +64,7 @@ export default function App() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(`${API_URL}frequency`);
         const data = await res.json();
         setOpenRooms(data);
       } catch (err) {
@@ -85,7 +90,7 @@ export default function App() {
   // Delete requirement met here
   const handleDeleteRoom = async (roomID: string) => {
     try {
-      await fetch(`${API_URL}/${roomID}`, {
+      await fetch(`${API_URL}frequency/${roomID}`, {
         method: "DELETE",
       });
       setOpenRooms((prev) => prev.filter((r) => r !== roomID));
@@ -121,6 +126,23 @@ export default function App() {
     } catch (error) {
       console.error("Error sending message:", error);
     }
+
+  const handleUpdateName = async () => {
+    if (!connection?.connectionId) return;
+    try {
+      const response = await fetch(`${API_URL}/user/${connection.connectionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(username),
+      });
+
+      if (response.ok) {
+        console.log("Username updated successfully");
+      }
+    } catch (err) {
+      console.error("Error updating username: ", err);}
+  }
+
   };
 
   return (
@@ -129,13 +151,17 @@ export default function App() {
         <div className="row-span-2 max-h-full overflow-hidden">
           <div className="grid grid-cols-5">
             <div className="col-span-1">
-              <Carousel className="max-w-full ">
+              <Carousel className="max-w-full">
                 <CarouselContent>
                   <CarouselItem className="text-2xl font-bold">
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-2/4 items-center justify-center p-6">
-                          <span className="text-4x1 font-semibold">SNAKE</span>
+                          <img
+                            src={snakecodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
                         </CardContent>
                       </Card>
                     </div>
@@ -159,8 +185,14 @@ export default function App() {
                     </div>
                   </CarouselItem>
                 </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
+                <div className="flex items-center justify-center mt-2 px-2">
+                  <CarouselPrevious className="static translate-y-0 translate-x-0" />
+
+                  <span className="text-4xl font-semibold text-center tracking-widest">
+                    <Button>NAME</Button>
+                  </span>
+                  <CarouselNext className="static translate-y-0 translate-x-0" />
+                </div>
               </Carousel>
             </div>
             <div className="col-span-3 size-full max-h-full">
@@ -189,8 +221,18 @@ export default function App() {
           <DropdownMenuContent>
             <DropdownMenuSeparator />
             {openRooms.map((room) => (
-              <DropdownMenuItem key={room} onClick={() => handleJoinRoom(room)}>
-                {room}
+              <DropdownMenuItem key={room} onClick={() => handleJoinRoom(room)}
+                className="flex justify-between items-center group"
+                >
+                  <span>{room}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteRoom(room);
+                    }}
+                  >
+                    Delete
+                  </button>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -216,7 +258,7 @@ export default function App() {
                 }
               }}
             ></Input>
-            <Button onClick={handleSendMessage}>Send</Button>
+            <Button>Send</Button>
           </div>
         </div>
       </div>
