@@ -4,7 +4,8 @@ import snakecodec from "./assets/snakecodec.jpg";
 import liquidcodec from "./assets/liquidcodec.jpg";
 import merylcodec from "./assets/Merylcodec.jpg";
 import "./App.css";
-import TypeIt from "typeit-react";
+import Typewriter from 'typewriter-effect';
+import React from "react";
 import { useSignalR } from "./hooks/signalRHook";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -28,13 +29,41 @@ import {
 
 const API_URL = "http://localhost:5062/api/";
 
+// This is heavily AI generated as I was unable to make the typewriter library work 
+const CodecMessage = React.memo(({ user, text, isLatest }: { user: string; text: string; isLatest: boolean }) => {
+  return (
+    // TODO: change my shadcn styling to closer match this color scheme 
+    <div className="mb-2 font-mono border-l-2 border-emerald-900 pl-3 py-1">
+      <span className="text-[10px] text-emerald-800 block uppercase">
+        {user}
+      </span>
+      <div className="text-emerald-400 text-sm">
+        {isLatest ? (
+          <Typewriter
+            options={{
+              strings: [text],
+              autoStart: true,
+              delay: 10,
+              cursor: '█',
+              loop: false,
+              deleteSpeed: Infinity,
+            }}
+          />
+        ) : (
+          <span>{text}</span>
+        )}
+      </div>
+    </div>
+  );
+}); // End of Heavy AI Generated Component
+
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
   const [activeRoom, setActiveRoom] = useState("");
   const [openRooms, setOpenRooms] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("");
-  const [message, setMessage] = useState<{ user: string; text: string }[]>([]);
+  const [chathistory, setChatHistory] = useState<{ user: string; text: string }[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [username, setUsername] = useState("");
 
@@ -80,7 +109,7 @@ export default function App() {
     if (!connection) return;
 
     connection.on("ReceiveMessage", (user: string, text: string) => {
-      setMessage((prev) => [...prev, { user, text }]);
+      setChatHistory((prev) => [...prev, { user, text }]);
     });
 
     return () => {
@@ -228,7 +257,7 @@ export default function App() {
                       <Card>
                         <CardContent className="flex aspect-2/4 items-center justify-center p-6">
                           <img
-                            src={snakecodec}
+                            src={liquidcodec}
                             className="h-full object-cover w-80"
                             alt=""
                           />
@@ -241,7 +270,7 @@ export default function App() {
                       <Card>
                         <CardContent className="flex aspect-2/4 items-center justify-center p-6">
                           <img
-                            src={liquidcodec}
+                            src={snakecodec}
                             className="h-full object-cover w-80"
                             alt=""
                           />
@@ -299,12 +328,15 @@ export default function App() {
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="row-span-1">
-          {message.map((msg, i) => (
-            <div key={i} className="mb-1">
-              <span className="font-bold">{msg.user}: </span>
-              <span>{msg.text}</span>
-            </div>
-          ))}
+          {chathistory.length > 0 ? (
+            <CodecMessage 
+              key={chathistory.length}
+              user={chathistory[chathistory.length - 1].user} 
+              text={chathistory[chathistory.length - 1].text} 
+              isLatest={true}
+            />
+          ) : (<span className="text-emerald-500 text-sm italic">...</span>
+          )}
         </div>
         <div className="row-span-1">
           <div className="flex flex-row">
