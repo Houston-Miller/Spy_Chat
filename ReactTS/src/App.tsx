@@ -1,7 +1,10 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, } from "react";
 import codec from "./assets/Codec.webp";
 import snakecodec from "./assets/snakecodec.jpg";
+import liquidcodec from "./assets/liquidcodec.jpg";
+import merylcodec from "./assets/Merylcodec.jpg";
 import "./App.css";
+import TypeIt from "typeit-react";
 import { useSignalR } from "./hooks/signalRHook";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -28,11 +31,9 @@ const API_URL = "http://localhost:5062/api/";
 export default function App() {
   // I THINK this host URL is the one provided by the signalR server, but I will need to confirm this
   const { connection } = useSignalR("http://localhost:5062/ChatHub");
-  //const [view, setView] = useState<"LOBBY" | "CODECBOARD">("LOBBY");
   const [activeRoom, setActiveRoom] = useState("");
   const [openRooms, setOpenRooms] = useState<string[]>([]);
   const [frequency, setFrequency] = useState("");
-  // setting this as message history
   const [message, setMessage] = useState<{ user: string; text: string }[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -105,7 +106,6 @@ export default function App() {
     try {
       await connection.invoke("JoinRoom", roomID);
       setActiveRoom(roomID);
-      //setView("CODECBOARD");
     } catch (err) {
       console.error("Error joining room: ", err);
     }
@@ -127,6 +127,7 @@ export default function App() {
       console.error("Error sending message:", error);
     }
 
+  // Update requirement met here
   const handleUpdateName = async () => {
     if (!connection?.connectionId) return;
     try {
@@ -170,7 +171,11 @@ export default function App() {
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-2/4 items-center justify-center p-6">
-                          <span className="text-4x1 font-semibold">LIQUID</span>
+                          <img
+                            src={liquidcodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
                         </CardContent>
                       </Card>
                     </div>
@@ -179,7 +184,11 @@ export default function App() {
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-2/4 items-center justify-center p-6">
-                          <span className="text-4x1 font-semibold">MERYL</span>
+                          <img
+                            src={merylcodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
                         </CardContent>
                       </Card>
                     </div>
@@ -211,7 +220,59 @@ export default function App() {
                 <img src={codec} className="h-full object-cover w-80" alt="" />
               </div>
             </div>
-            <div className="col-span-1">LIQUID</div>
+            <div className="col-span-1">
+              <Carousel className="max-w-full">
+                <CarouselContent>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <img
+                            src={snakecodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <img
+                            src={liquidcodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="text-2xl font-bold">
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-2/4 items-center justify-center p-6">
+                          <img
+                            src={merylcodec}
+                            className="h-full object-cover w-80"
+                            alt=""
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <div className="flex items-center justify-center mt-2 px-2">
+                  <CarouselPrevious className="static translate-y-0 translate-x-0" />
+
+                  <span className="text-4xl font-semibold text-center tracking-widest">
+                    <Button>NAME</Button>
+                  </span>
+                  <CarouselNext className="static translate-y-0 translate-x-0" />
+                </div>
+              </Carousel>
+            </div>
           </div>
         </div>
         <DropdownMenu>
@@ -248,13 +309,14 @@ export default function App() {
         <div className="row-span-1">
           <div className="flex flex-row">
             <Input
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="ENTER MESSAGE..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
+            //update this input to use the typeit library 
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="ENTER MESSAGE..."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
                 }
               }}
             ></Input>
