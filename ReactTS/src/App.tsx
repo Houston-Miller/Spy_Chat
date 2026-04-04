@@ -12,9 +12,7 @@ import { Input } from "./components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -44,7 +42,7 @@ const CodecMessage = React.memo(({ user, text, isLatest }: { user: string; text:
             options={{
               strings: [text],
               autoStart: true,
-              delay: 10,
+              delay: 70,
               cursor: '█',
               loop: false,
               deleteSpeed: Infinity,
@@ -67,6 +65,7 @@ export default function App() {
   const [chathistory, setChatHistory] = useState<{ user: string; text: string }[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [username, setUsername] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
 
   // Create requirement met here
   const handleCreateRoom = async (roomID: string) => {
@@ -156,25 +155,29 @@ export default function App() {
     } catch (error) {
       console.error("Error sending message:", error);
     }
+  
+  };
+  
 
   // Update requirement met here
   const handleUpdateName = async () => {
     if (!connection?.connectionId) return;
     try {
-      const response = await fetch(`${API_URL}/user/${connection.connectionId}`, {
+      const response = await fetch(`${API_URL}user/${connection.connectionId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(username),
       });
 
       if (response.ok) {
+        setIsEditingName(false);
         console.log("Username updated successfully");
       }
     } catch (err) {
       console.error("Error updating username: ", err);}
-  }
-
   };
+
+  
 
   return (
     <div className="h-screen dark">
@@ -227,8 +230,25 @@ export default function App() {
                 <div className="flex items-center justify-center mt-2 px-2">
                   <CarouselPrevious className="static translate-y-0 translate-x-0" />
 
-                  <span className="text-4xl font-semibold text-center tracking-widest">
-                    <Button>NAME</Button>
+                  <span className="flex flex-col items-center gap-2">
+                    {isEditingName ? (
+                      <Input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="ENTER USERNAME..."
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleUpdateName();
+                          if (e.key === "Escape") setIsEditingName(false);
+                        }}
+                      />
+                    ) : (
+                      <Card>
+                        {username || "USERNAME"}
+                      </Card>
+                    )}
+                    <Button onClick={() => isEditingName ? handleUpdateName() : setIsEditingName(true)}>
+                      {isEditingName ? "Save" : "RENAME"}
+                    </Button>
                   </span>
                   <CarouselNext className="static translate-y-0 translate-x-0" />
                 </div>
@@ -246,7 +266,7 @@ export default function App() {
                   }
                 }}
               />
-              <div className="size-full flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 <img src={codec} className="h-full object-cover w-80" alt="" />
               </div>
             </div>
@@ -296,8 +316,25 @@ export default function App() {
                 <div className="flex items-center justify-center mt-2 px-2">
                   <CarouselPrevious className="static translate-y-0 translate-x-0" />
 
-                  <span className="text-4xl font-semibold text-center tracking-widest">
-                    <Button>NAME</Button>
+                  <span className="flex flex-col items-center gap-2">
+                    {isEditingName ? (
+                      <Input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="ENTER USERNAME..."
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleUpdateName();
+                          if (e.key === "Escape") setIsEditingName(false);
+                        }}
+                      />
+                    ) : (
+                      <Card>
+                        {username || "USERNAME"}
+                      </Card>
+                    )}
+                    <Button onClick={() => isEditingName ? handleUpdateName() : setIsEditingName(true)}>
+                      {isEditingName ? "Save" : "RENAME"}
+                    </Button>
                   </span>
                   <CarouselNext className="static translate-y-0 translate-x-0" />
                 </div>
@@ -360,124 +397,3 @@ export default function App() {
     </div>
   );
 }
-
-{
-  /* {view === "LOBBY" && <Lobby onJoinRoom={handleJoinRoom} />}
-      {view === "CODECBOARD" && <CodecBoard connection={connection} roomID={activeRoom} />} */
-}
-
-// This is the template code for vite, I am keeping it for reference atm
-//   const [count, setCount] = useState(0)
-
-//   return (
-//     <>
-//       <section id="center">
-//         <div className="hero">
-//           <img src={heroImg} className="base" width="170" height="179" alt="" />
-//           <img src={reactLogo} className="framework" alt="React logo" />
-//           <img src={viteLogo} className="vite" alt="Vite logo" />
-//         </div>
-//         <div>
-//           <h1>Get started</h1>
-//           <p>
-//             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-//           </p>
-//         </div>
-//         <button
-//           className="counter"
-//           onClick={() => setCount((count) => count + 1)}
-//         >
-//           Count is {count}
-//         </button>
-//       </section>
-
-//       <div className="ticks"></div>
-
-//       <section id="next-steps">
-//         <div id="docs">
-//           <svg className="icon" role="presentation" aria-hidden="true">
-//             <use href="/icons.svg#documentation-icon"></use>
-//           </svg>
-//           <h2>Documentation</h2>
-//           <p>Your questions, answered</p>
-//           <ul>
-//             <li>
-//               <a href="https://vite.dev/" target="_blank">
-//                 <img className="logo" src={viteLogo} alt="" />
-//                 Explore Vite
-//               </a>
-//             </li>
-//             <li>
-//               <a href="https://react.dev/" target="_blank">
-//                 <img className="button-icon" src={reactLogo} alt="" />
-//                 Learn more
-//               </a>
-//             </li>
-//           </ul>
-//         </div>
-//         <div id="social">
-//           <svg className="icon" role="presentation" aria-hidden="true">
-//             <use href="/icons.svg#social-icon"></use>
-//           </svg>
-//           <h2>Connect with us</h2>
-//           <p>Join the Vite community</p>
-//           <ul>
-//             <li>
-//               <a href="https://github.com/vitejs/vite" target="_blank">
-//                 <svg
-//                   className="button-icon"
-//                   role="presentation"
-//                   aria-hidden="true"
-//                 >
-//                   <use href="/icons.svg#github-icon"></use>
-//                 </svg>
-//                 GitHub
-//               </a>
-//             </li>
-//             <li>
-//               <a href="https://chat.vite.dev/" target="_blank">
-//                 <svg
-//                   className="button-icon"
-//                   role="presentation"
-//                   aria-hidden="true"
-//                 >
-//                   <use href="/icons.svg#discord-icon"></use>
-//                 </svg>
-//                 Discord
-//               </a>
-//             </li>
-//             <li>
-//               <a href="https://x.com/vite_js" target="_blank">
-//                 <svg
-//                   className="button-icon"
-//                   role="presentation"
-//                   aria-hidden="true"
-//                 >
-//                   <use href="/icons.svg#x-icon"></use>
-//                 </svg>
-//                 X.com
-//               </a>
-//             </li>
-//             <li>
-//               <a href="https://bsky.app/profile/vite.dev" target="_blank">
-//                 <svg
-//                   className="button-icon"
-//                   role="presentation"
-//                   aria-hidden="true"
-//                 >
-//                   <use href="/icons.svg#bluesky-icon"></use>
-//                 </svg>
-//                 Bluesky
-//               </a>
-//             </li>
-//           </ul>
-//         </div>
-//       </section>
-
-//       <div className="ticks"></div>
-//       <section id="spacer"></section>
-//     </>
-//   )
-// }
-
-// export default App
