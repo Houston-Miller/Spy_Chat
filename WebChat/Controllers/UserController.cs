@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebChat.Models;
 using Microsoft.AspNetCore.SignalR;
+using WebChat.Data;
 using WebChat.Hubs;
 
 namespace WebChat.Controllers

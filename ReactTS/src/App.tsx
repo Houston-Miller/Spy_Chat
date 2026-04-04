@@ -30,6 +30,7 @@ import {
 const API_URL = "http://localhost:5062/api/";
 
 // This is heavily AI generated as I was unable to make the typewriter library work 
+// I hate that this is at the top of the file but I tried like 3 different typewriter libraries and struggled with getting them to drop in easily 
 const CodecMessage = React.memo(({ user, text, isLatest }: { user: string; text: string; isLatest: boolean }) => {
   return (
     // TODO: change my shadcn styling to closer match this color scheme 

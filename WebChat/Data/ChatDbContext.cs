@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebChat.Models;
 
-
+namespace WebChat.Data;
 
 public class ChatDbContext : DbContext
 {
