@@ -42,7 +42,7 @@ const CodecMessage = React.memo(({ user, text, isLatest }: { user: string; text:
             options={{
               strings: [text],
               autoStart: true,
-              delay: 70,
+              delay: 50,
               cursor: '█',
               loop: false,
               deleteSpeed: Infinity,
@@ -181,8 +181,8 @@ export default function App() {
 
   return (
     <div className="h-screen dark">
-      <div className="grid grid-rows-4 h-full">
-        <div className="row-span-2 max-h-full overflow-hidden">
+      <div className="grid grid-rows-3 h-full">
+        <div className="row-span-3 min-h-0 max-h-full overflow-hidden">
           <div className="grid grid-cols-5">
             <div className="col-span-1">
               <Carousel className="max-w-full">
@@ -390,7 +390,6 @@ export default function App() {
                 }
               }}
             ></Input>
-            <Button>Send</Button>
           </div>
         </div>
       </div>
