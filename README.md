@@ -4,7 +4,7 @@
 Spy Chat is a thematic proof of concept for a fun, dynamic chat application based on the styling of the "codec conversations" 
 from the early Metal Gear Solid video games
 
-<img width="500" height="288" alt="image" src="https://github.com/user-attachments/assets/159f0383-1d03-4ec0-9c6c-5710d7eae300" />
+<img width="1500" height="750" alt="image" src="https://github.com/user-attachments/assets/0c48a8c8-86c5-4cae-8a75-44e2ba27101f" />
 
 
 ## Features
@@ -75,13 +75,20 @@ npm run dev
 Now that the project is running, open two browser windows, ideally in a side-by-side view, and navigate on both browsers to:
 http://localhost:5173
 
-Click the top input bar labeled "frequencies" and enter a string of numbers to represent your room id, for thematic purposes I reccomend '140.85'
+Click the top input bar labeled "frequencies" and enter a string of numbers to represent your room id, for thematic purposes I reccomend '141.80'
 Press ENTER
 
 This 'frequency' will now be listed in the drop down menu under the 'Frequencies' button - if there are none there refresh the page(s)
 click into this listed frequency on both browser windows
 
-entering text in the bottom input field and pressing ENTER should now sucessfully send to both windows. Explore the endpooints available here by changing your name, exploring adding new rooms and moving between them, and deleting some old rooms.
+entering text in the bottom input field and pressing ENTER should now sucessfully send to both windows. Explore the endpooints available here by changing your name with the **rename** button and modular text field, exploring adding new rooms and moving between them, and deleting some old rooms.
+
+in your WebChat terminal, also run
+
+```
+dotnet test
+```
+to load and run the tests included in the project (if the test are not populating automatically in the test field in VSCode's testing navigation, please use the Refresh Tests function at the top of the bar, or press (Ctrl+; , Ctrl+R))
 
 ## What I learned 
 
