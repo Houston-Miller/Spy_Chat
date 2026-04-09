@@ -181,7 +181,7 @@ export default function App() {
 
   return (
     <div className="h-screen dark">
-      <div className="grid grid-rows-3 h-full">
+      <div className="grid grid-rows-5 h-full">
         <div className="row-span-3 min-h-0 max-h-full overflow-hidden">
           <div className="grid grid-cols-5">
             <div className="col-span-1">
