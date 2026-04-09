@@ -39,7 +39,7 @@ This project requires the following tools to be installed:
 
 to begin, clone the git repo
 ```
-git clone https://Link-to-Repo
+git clone https://github.com/Houston-Miller/Spy_Chat.git
 ```
 Navigate to the cloned directory
 ```
